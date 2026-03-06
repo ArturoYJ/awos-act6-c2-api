@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ApiResponse } from '../types/common';
-import { StockData, StockDay } from '../types/stocks.types';
+import { StockData, StockDay, StockStats, ChartPoint } from '../types/stocks.types';
 
 /**
  * Servicio de conexión con Alpha Vantage.
@@ -52,6 +52,22 @@ export async function getDailyStockPrices(symbol: string): Promise<ApiResponse<S
       volume: values['5. volume']
     }));
 
+  // Calcular estadísticas del periodo
+  const closes = dailyPrices.map(d => parseFloat(d.close));
+  const high = Math.max(...closes);
+  const low = Math.min(...closes);
+  const latest = closes[0];
+  const oldest = closes[closes.length - 1];
+  const periodChange = ((latest - oldest) / oldest) * 100;
+
+  const stats: StockStats = { high, low, latest, periodChange };
+
+  // Preparar datos para gráfico (orden cronológico)
+  const chartData: ChartPoint[] = [...dailyPrices].reverse().map(day => ({
+    date: day.date.slice(5), // "03-05" en vez de "2026-03-05"
+    close: parseFloat(day.close),
+  }));
+
   return {
     success: true,
     message: `Precios diarios de ${symbol.toUpperCase()} obtenidos con éxito`,
@@ -59,7 +75,9 @@ export async function getDailyStockPrices(symbol: string): Promise<ApiResponse<S
       symbol: metaData['2. Symbol'],
       last_refreshed: metaData['3. Last Refreshed'],
       time_zone: metaData['5. Time Zone'],
-      daily_prices: dailyPrices
+      daily_prices: dailyPrices,
+      stats,
+      chart_data: chartData
     }
   };
 }

@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🔌 API Gateway — SOA
 
-## Getting Started
+API Gateway construido con **Express.js + TypeScript** que centraliza el acceso a 3 servicios externos mediante Arquitectura Orientada a Servicios.
 
-First, run the development server:
+## Endpoints
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+| Método | Ruta                   | Descripción                     | API externa           |
+| ------ | ---------------------- | ------------------------------- | --------------------- |
+| `POST` | `/api/images/generate` | Genera imágenes con IA          | Hugging Face (FLUX.1) |
+| `GET`  | `/api/asteroids`       | Asteroides cercanos a la Tierra | NASA NeoWs            |
+| `GET`  | `/api/stocks/:symbol`  | Precios diarios de acciones     | Alpha Vantage         |
+| `GET`  | `/api/health`          | Health check del servicio       | —                     |
+
+## Requisitos
+
+- Node.js 20+
+- Claves de API: [Hugging Face](https://huggingface.co/settings/tokens), [NASA](https://api.nasa.gov/), [Alpha Vantage](https://www.alphavantage.co/support/#api-key)
+
+## Configuración
+
+Crear archivo `.ENV` en la raíz:
+
+```env
+PORT=3001
+HUGGINGFACE_API_KEY=tu_clave_de_API_de_huggingface
+HISTORY_SERVICE_URL=http://localhost:3000/api/history
+NASA_API_KEY=tu_clave_de_API_de_nasa
+ALPHA_VANTAGE_API_KEY=tu_clave_de_API_de_alpha_vantage
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Ejecución local
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev      # Desarrollo con hot-reload (nodemon)
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Ejecución con Docker
 
-## Learn More
+Este servicio se levanta junto con los demás desde el `docker-compose.yml` del repo **infra**. Ver instrucciones en ese repositorio.
 
-To learn more about Next.js, take a look at the following resources:
+## Estructura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── index.ts              # Entry point Express
+├── middleware/            # Error handler centralizado
+├── routes/               # Definición de endpoints
+├── services/             # Conexiones a APIs externas
+└── types/                # Interfaces TypeScript
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tecnologías
 
-## Deploy on Vercel
+Express 5 · TypeScript · Axios · Nodemon · Node 20
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Repositorios relacionados
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Repo                                                                 | Descripción                      |
+| -------------------------------------------------------------------- | -------------------------------- |
+| [awos-act6-c2-web](https://github.com/ArturoYJ/awos-act6-c2-web)     | Frontend Next.js                 |
+| [awos-act6-c2-infra](https://github.com/ArturoYJ/awos-act6-c2-infra) | Infraestructura + Docker Compose |
