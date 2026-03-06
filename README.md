@@ -23,7 +23,7 @@ Crear archivo `.ENV` en la raíz:
 ```env
 PORT=3001
 HUGGINGFACE_API_KEY=tu_clave_de_API_de_huggingface
-HISTORY_SERVICE_URL=http://localhost:3000/api/history
+HISTORY_SERVICE_URL=http://localhost:3002/api/history
 NASA_API_KEY=tu_clave_de_API_de_nasa
 ALPHA_VANTAGE_API_KEY=tu_clave_de_API_de_alpha_vantage
 ```
